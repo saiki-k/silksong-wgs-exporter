@@ -1,5 +1,8 @@
 {
 	"main": "src/index.js",
 	"output": "build/sea-prep.blob",
-	"disableExperimentalSEAWarning": true
+	"disableExperimentalSEAWarning": true,
+	"assets": {
+		"config.js": "src/config.js"
+	}
 }

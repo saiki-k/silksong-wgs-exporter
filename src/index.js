@@ -363,7 +363,28 @@ class ContainerScanner {
 module.exports = ContainerScanner;
 
 if (require.main === module) {
-	const config = require('./config');
+	// Load config - detect if running as SEA or regular Node.js
+	let config;
+	try {
+		// Try regular require first (works when running as node src/index.js)
+		config = require('./config');
+	} catch (err) {
+		// Running as SEA - load from embedded asset
+		const { getAsset } = require('node:sea');
+		if (getAsset) {
+			const configCode = getAsset('config.js', 'utf8');
+			const module = { exports: {} };
+			eval(configCode);
+			config = module.exports;
+			return;
+		}
+
+		console.error('Error loading config:', err.message);
+		console.log('Press Enter to exit...');
+		process.stdin.once('data', () => {
+			process.exit(1);
+		});
+	}
 
 	console.log('='.repeat(80));
 	console.log('Windows Gaming Services - Container Scanner');
