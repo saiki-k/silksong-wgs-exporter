@@ -2,43 +2,73 @@
 
 [Download](../../releases) • [Documentation](src/TECHNICAL.md) • [Report Bugs](../../issues)
 
-#### Export your saves from Game Pass to Steam-compatible format
+Export your **Hollow Knight: Silksong** saves from Game Pass to Steam-compatible format.
 
-I haven't tested it, but this should work with Hollow Knight saves as well.
+Game Pass stores save files in obfuscated containers with weird directory names, making them inaccessible without knowing what's what. Steam, on the other hand, is a darling - you immediately know what `user1.dat` is. This tool bridges that gap, extracting your saves into the familiar Steam format.
 
-## 🚀 Quick start
+I haven't tested it, but this should work with **Hollow Knight** saves as well.
 
-#### Option 1: Run the executable (Recommended)
+## 🚀 Quick setup
 
-1. Download `silksong-wgs-exporter.exe` from the [latest release](../../releases)
-2. Run the executable
+You can either use the pre-built standalone executable or run the project from source.
+
+### Use the standalone executable (Recommended)
+
+1. **Download and extract** `silksong-wgs-exporter-windows.zip` from the [latest release](../../releases)
+
+2. **Run the executable**
+
 3. Find your saves in the `exported_save_files/` folder, created in the same directory as the executable
 
-#### Option 2: Run it from source
+### Run from source
 
-```bash
-git clone --depth 1 https://github.com/saiki-k/silksong-wgs-exporter.git
-cd silksong-wgs-exporter
-npm install
-node src/index.js
-```
+1. **Install Node.js (v20.6.0 or higher)**: Download from [nodejs.org](https://nodejs.org)
+
+2. **Clone and install dependencies**:
+
+    ```bash
+    git clone --depth 1 https://github.com/saiki-k/silksong-wgs-exporter.git
+    cd silksong-wgs-exporter
+    npm install
+    ```
+
+3. **Run the exporter**:
+
+    ```bash
+    node src/index.js
+    ```
 
 ## 📁 What gets exported
 
+Your Game Pass save files are extracted and organized into the familiar Steam format.
+
+For whatever weird reason, the `shared.dat` counterpart (`sharedData.dat`) from Game Pass is stored decrypted (as JSON). This exporter converts it back into the encrypted `.dat` format, as expected by Steam.
+
 ```
 exported_save_files/
-├── user1.dat, user2.dat, ...                  # Save slots
-├── shared.dat
-└── Restore_Points1/, Restore_Points2/, ...    # Restore points
+├── user1.dat                                  # Save slot 1
+├── user2.dat                                  # Save slot 2 (if it exists)
+├── ...
+├── shared.dat                                 # Shared game data (encrypted for Steam compatibility)
+└── Restore_Points1/                           # Restore points for Save slot 1 (if it exists)
+    ├── NODELrestoreData1.dat
+	├── restoreData2.dat
+	└── ...
+└── Restore_Points2/                           # Restore points for Save slot 2 (if it exists)
+	├── NODELrestoreData2.dat
+	└── ...
+└── ...
 ```
 
-## 🛠️ Build the executable
+## 🛠️ Building from source
+
+Run the following command to create a standalone executable:
 
 ```bash
-npm run build  # Creates build/silksong-wgs-exporter.exe
+npm run build
 ```
 
-Requires Node.js 20+. Uses [Node.js SEA](https://nodejs.org/api/single-executable-applications.html) for standalone executables.
+The executable and zip package will be created in the `build/` directory. Requires Node.js v20.6.0 or higher.
 
 ## 📚 Documentation
 

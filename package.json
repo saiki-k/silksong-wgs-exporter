@@ -9,6 +9,9 @@
 	"scripts": {
 		"build": "node src/build.js"
 	},
+	"engines": {
+		"node": ">=20.6.0"
+	},
 	"keywords": [
 		"hollow-knight",
 		"silksong",
