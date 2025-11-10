@@ -476,7 +476,7 @@ if (require.main === module) {
 		const exportResults = scanner.exportSaveFiles(config.EXPORT_DIRECTORY);
 
 		console.log(`\nExport results:`);
-		console.log(`  Exported: ${exportResults.exported.length}`);
+		console.log(`  Exported:  ${exportResults.exported.length}`);
 		console.log(`  Skipped:   ${exportResults.skipped.length}`);
 		console.log(`  Errors:    ${exportResults.errors.length}`);
 
