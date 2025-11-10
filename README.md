@@ -14,9 +14,9 @@ You can either use the pre-built standalone executable or run the project from s
 
 ### Use the standalone executable (Recommended)
 
-1. **Download and extract** `silksong-wgs-exporter-windows.zip` from the [latest release](../../releases)
+1. Download and extract `silksong-wgs-exporter-windows.zip` from the [latest release](../../releases)
 
-2. **Run the executable**
+2. Run `silksong-wgs-exporter.exe`
 
 3. Find your saves in the `exported_save_files/` folder, created in the same directory as the executable
 
@@ -46,15 +46,15 @@ For whatever weird reason, the `shared.dat` counterpart (`sharedData.dat`) from 
 
 ```
 exported_save_files/
-├── user1.dat                                  # Save slot 1
-├── user2.dat                                  # Save slot 2 (if it exists)
+├── user1.dat                    # Save slot 1
+├── user2.dat                    # Save slot 2 (if it exists)
 ├── ...
-├── shared.dat                                 # Shared game data (encrypted for Steam compatibility)
-└── Restore_Points1/                           # Restore points for Save slot 1 (if it exists)
+├── shared.dat                   # Shared game data (encrypted for Steam compatibility)
+└── Restore_Points1/             # Restore points for Save slot 1 (if it exists)
     ├── NODELrestoreData1.dat
 	├── restoreData2.dat
 	└── ...
-└── Restore_Points2/                           # Restore points for Save slot 2 (if it exists)
+└── Restore_Points2/             # Restore points for Save slot 2 (if it exists)
 	├── NODELrestoreData2.dat
 	└── ...
 └── ...
