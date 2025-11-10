@@ -1,6 +1,20 @@
 const fs = require('fs');
 const path = require('path');
 
+let encodeData, CSHARP_HEADER;
+try {
+	({ encodeData, CSHARP_HEADER } = require('./codec'));
+} catch (err) {
+	const { isSea, getAsset } = require('node:sea');
+	if (isSea()) {
+		const codecCode = getAsset('codec.js', 'utf8');
+		const module = { exports: {} };
+		const fn = new Function('module', 'exports', 'require', codecCode);
+		fn(module, module.exports, require);
+		({ encodeData, CSHARP_HEADER } = module.exports);
+	}
+}
+
 class ContainerScanner {
 	constructor(filePath) {
 		this.filePath = filePath;
@@ -29,7 +43,7 @@ class ContainerScanner {
 		try {
 			const str = this.containerIndexBuffer.toString('utf16le', afterLength, stringEnd).replace(/\0/g, '');
 			return [str, stringEnd];
-		} catch (e) {
+		} catch (err) {
 			return [null, offset];
 		}
 	}
@@ -89,7 +103,7 @@ class ContainerScanner {
 				timestamp: this.formatTimestamp(timestamp),
 				container_id: containerId,
 			};
-		} catch (e) {
+		} catch (err) {
 			return null;
 		}
 	}
@@ -324,6 +338,27 @@ class ContainerScanner {
 				if (containerName === 'shareddata') {
 					destPath = path.join(resolvedExportedDir, 'shared.dat');
 					displayName = 'shared.dat';
+
+					try {
+						const fileContent = fs.readFileSync(sourcePath);
+
+						const isAlreadyEncrypted =
+							fileContent.length > CSHARP_HEADER.length &&
+							fileContent.subarray(0, CSHARP_HEADER.length).equals(CSHARP_HEADER);
+
+						if (isAlreadyEncrypted) {
+							fs.copyFileSync(sourcePath, destPath);
+						} else {
+							const jsonContent = fileContent.toString('utf8');
+							const encryptedBytes = encodeData(jsonContent);
+							fs.writeFileSync(destPath, encryptedBytes);
+						}
+
+						results.exported.push({ container: containerName, file: displayName, path: destPath });
+					} catch (err) {
+						results.errors.push({ file: filename, reason: err.message });
+					}
+					continue;
 				} else if (containerName.startsWith('restore')) {
 					const restoreNum = containerName.replace('restore', '');
 
@@ -363,27 +398,24 @@ class ContainerScanner {
 module.exports = ContainerScanner;
 
 if (require.main === module) {
-	// Load config - detect if running as SEA or regular Node.js
 	let config;
 	try {
-		// Try regular require first (works when running as node src/index.js)
 		config = require('./config');
 	} catch (err) {
-		// Running as SEA - load from embedded asset
-		const { getAsset } = require('node:sea');
-		if (getAsset) {
+		const { isSea, getAsset } = require('node:sea');
+		if (isSea()) {
 			const configCode = getAsset('config.js', 'utf8');
 			const module = { exports: {} };
-			eval(configCode);
+			const fn = new Function('module', 'exports', 'require', configCode);
+			fn(module, module.exports, require);
 			config = module.exports;
-			return;
+		} else {
+			console.error('Error loading config:', err.message);
+			console.log('Press Enter to exit...');
+			process.stdin.once('data', () => {
+				process.exit(1);
+			});
 		}
-
-		console.error('Error loading config:', err.message);
-		console.log('Press Enter to exit...');
-		process.stdin.once('data', () => {
-			process.exit(1);
-		});
 	}
 
 	console.log('='.repeat(80));

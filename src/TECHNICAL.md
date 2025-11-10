@@ -129,17 +129,20 @@ The export process organizes files based on container type:
 **sharedData container:**
 
 -   File: `sharedData.dat` → Renamed to `shared.dat` in root
+-   **Format conversion:** WGS stores this as plain JSON, but Steam expects encrypted .dat format
+-   The exporter checks for existing encryption (C# header detection) and encrypts if needed
+-   Uses AES-256-ECB with game-specific key and prepends C# binary header
 
 **save# containers (save1, save2, ...):**
 
--   Files: `user*.dat` → Copied to root as-is
+-   Files: `user*.dat` → Copied to root as-is (already encrypted)
 
 **restore# containers (restore1, restore2, ...):**
 
 -   Files starting with `user`:
-    -   `user1.dat`, `user1_1.0.28891.dat`, etc. → Copied to root
+    -   `user1.dat`, `user1_1.0.28891.dat`, etc. → Copied to root (already encrypted)
 -   Files NOT starting with `user`:
-    -   `NODELrestoreData1.dat` → Copied to `Restore_Points#/`
+    -   `NODELrestoreData1.dat` → Copied to `Restore_Points#/` (already encrypted)
 
 This organization keeps primary saves in the root and backup/restore data in subdirectories.
 

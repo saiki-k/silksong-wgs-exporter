@@ -16,9 +16,11 @@
 		"wgs",
 		"game-pass"
 	],
-	"author": "",
+	"author": "Sai Kishore Komanduri",
 	"license": "MIT",
 	"devDependencies": {
-		"postject": "^1.0.0-alpha.6"
+		"png-to-ico": "^2.1.8",
+		"postject": "^1.0.0-alpha.6",
+		"resedit": "^2.0.2"
 	}
 }
