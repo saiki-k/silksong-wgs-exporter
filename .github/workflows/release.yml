@@ -1,0 +1,63 @@
+name: Build and Release
+
+on:
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    build:
+        name: Build on Windows
+        runs-on: windows-latest
+        strategy:
+            matrix:
+                node-version: [20]
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build executable
+              run: npm run build
+
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                  name: build-windows
+                  path: build/*.zip
+
+    release:
+        name: Create Release
+        needs: build
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+
+        steps:
+            - name: Download all artifacts
+              uses: actions/download-artifact@v4
+              with:
+                  path: artifacts
+
+            - name: Create Release
+              uses: softprops/action-gh-release@v1
+              with:
+                  files: artifacts/**/*.zip
+                  draft: false
+                  prerelease: false
+                  body: |
+                      ## Silksong WGS Exporter ${{ github.ref_name }}
+
+                      Download `silksong-wgs-exporter-windows.zip`.
+
+                      Extract the zip and run the executable to export your Hollow Knight/Silksong Game Pass saves.
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

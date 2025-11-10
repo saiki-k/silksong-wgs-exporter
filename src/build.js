@@ -1,4 +1,4 @@
-const { copyFileSync, mkdirSync, writeFileSync, existsSync } = require('fs');
+const { copyFileSync, mkdirSync, writeFileSync, unlinkSync, rmSync, existsSync } = require('fs');
 const { execSync } = require('child_process');
 const path = require('path');
 
@@ -91,7 +91,29 @@ async function build() {
 		console.warn('⚠ Silkeater.png not found, skipping icon setup');
 	}
 
-	console.log(`\n✅ Build complete! Created ${path.relative(process.cwd(), outputExePath)}`);
+	console.log('\n5. Creating distribution package (zip archive)...');
+
+	const distDirName = 'silksong-wgs-exporter-windows';
+	const distDir = path.join(buildDir, distDirName);
+	mkdirSync(distDir, { recursive: true });
+
+	const distExePath = path.join(distDir, 'silksong-wgs-exporter.exe');
+	copyFileSync(outputExePath, distExePath);
+
+	const AdmZip = require('adm-zip');
+	const zip = new AdmZip();
+	zip.addLocalFolder(distDir);
+	const zipPath = path.join(buildDir, `${distDirName}.zip`);
+	zip.writeZip(zipPath);
+
+	console.log('\n6. Cleaning up temporary files...');
+	existsSync(blobFilePath) && unlinkSync(blobFilePath);
+	existsSync(outputExePath) && unlinkSync(outputExePath);
+	existsSync(iconPath) && unlinkSync(iconPath);
+
+	console.log(`\n✅ Build complete!`);
+	console.log(`Executable: ${path.relative(process.cwd(), distExePath)}`);
+	console.log(`Package: ${path.relative(process.cwd(), zipPath)}`);
 }
 
 build().catch((err) => {
