@@ -8,7 +8,7 @@ Game Pass stores save files in obfuscated containers with weird directory names,
 
 I haven't tested it, but this should work with **Hollow Knight** saves as well.
 
-## 🚀 Quick setup
+## 🚀 Quick Setup
 
 You can either use the pre-built standalone executable or run the project from source.
 
@@ -60,7 +60,7 @@ exported_save_files/
 └── ...
 ```
 
-## 🛠️ Building from source
+## 🛠️ Building from Source
 
 Run the following command to create a standalone executable:
 
