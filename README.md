@@ -6,8 +6,6 @@ Export your **Hollow Knight: Silksong** saves from Game Pass to Steam-compatible
 
 Game Pass stores save files in obfuscated containers with weird directory names, making them inaccessible without knowing what's what. Steam, on the other hand, is a darling - you immediately know what `user1.dat` is. This tool bridges that gap, extracting your saves into the familiar Steam format.
 
-I haven't tested it, but this should work with **Hollow Knight** saves as well.
-
 ## 🚀 Quick Setup
 
 You can either use the pre-built standalone executable or run the project from source.
