@@ -1,4 +1,4 @@
-const { copyFileSync, mkdirSync, writeFileSync, unlinkSync, rmSync, existsSync, readFileSync } = require('fs');
+const fs = require('fs');
 const { execSync } = require('child_process');
 const path = require('path');
 const pngToIco = require('png-to-ico');
@@ -9,7 +9,7 @@ async function build() {
 	console.log('Building single executable application...\n');
 
 	const buildDir = path.join(__dirname, '..', '..', 'dist');
-	mkdirSync(buildDir, { recursive: true });
+	fs.mkdirSync(buildDir, { recursive: true });
 
 	const outputExePath = path.join(buildDir, 'wgs-inspector.exe');
 	const blobFilePath = path.join(buildDir, 'sea-prep.blob');
@@ -22,20 +22,20 @@ async function build() {
 	console.log('\n1. Bundling application with dependencies using ncc...');
 	execSync(`npx ncc build src/index.js -o dist/ncc-output`, { stdio: 'inherit' });
 
-	copyFileSync(path.join(buildDir, 'ncc-output', 'index.js'), bundledPath);
+	fs.copyFileSync(path.join(buildDir, 'ncc-output', 'index.js'), bundledPath);
 
 	const seaConfig = {
 		main: bundledPath,
 		output: blobFilePath,
 		disableExperimentalSEAWarning: true,
 	};
-	writeFileSync(seaConfigPath, JSON.stringify(seaConfig, null, '\t'));
+	fs.writeFileSync(seaConfigPath, JSON.stringify(seaConfig, null, '\t'));
 
 	console.log('\n2. Generating SEA blob...');
 	execSync(`node --experimental-sea-config "${seaConfigPath}"`, { stdio: 'inherit' });
 
 	console.log('\n3. Copying Node.js executable...');
-	copyFileSync(process.execPath, outputExePath);
+	fs.copyFileSync(process.execPath, outputExePath);
 
 	console.log('\n4. Injecting application code...');
 	execSync(
@@ -47,19 +47,19 @@ async function build() {
 	const pngPath = path.join(__dirname, 'assets', 'Silkeater.png');
 	const iconPath = path.join(buildDir, 'icon.ico');
 
-	if (existsSync(pngPath)) {
+	if (fs.existsSync(pngPath)) {
 		try {
 			const icoBuffer = await pngToIco(pngPath);
-			writeFileSync(iconPath, icoBuffer);
+			fs.writeFileSync(iconPath, icoBuffer);
 			console.log('✓ Converted PNG to ICO');
 
 			console.log('⏳ Setting icon and metadata...');
 
-			const exeData = readFileSync(outputExePath);
+			const exeData = fs.readFileSync(outputExePath);
 			const exe = ResEdit.NtExecutable.from(exeData, { ignoreCert: true });
 			const res = ResEdit.NtExecutableResource.from(exe);
 
-			const iconFile = ResEdit.Data.IconFile.from(readFileSync(iconPath));
+			const iconFile = ResEdit.Data.IconFile.from(fs.readFileSync(iconPath));
 			ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
 				res.entries,
 				1, // Icon ID
@@ -110,10 +110,10 @@ async function build() {
 	const extension = process.platform === 'win32' ? '.exe' : '';
 	const distDirName = `wgs-inspector`;
 	const distDir = path.join(buildDir, distDirName);
-	mkdirSync(distDir, { recursive: true });
+	fs.mkdirSync(distDir, { recursive: true });
 
 	const distExePath = path.join(distDir, `wgs-inspector${extension}`);
-	copyFileSync(outputExePath, distExePath);
+	fs.copyFileSync(outputExePath, distExePath);
 
 	const zip = new AdmZip();
 	zip.addLocalFolder(distDir);
@@ -121,12 +121,12 @@ async function build() {
 	zip.writeZip(zipPath);
 
 	console.log('\n7. Cleaning up temporary files...');
-	existsSync(seaConfigPath) && unlinkSync(seaConfigPath);
-	existsSync(blobFilePath) && unlinkSync(blobFilePath);
-	existsSync(bundledPath) && unlinkSync(bundledPath);
-	rmSync(path.join(buildDir, 'ncc-output'), { recursive: true, force: true });
-	existsSync(outputExePath) && unlinkSync(outputExePath);
-	existsSync(iconPath) && unlinkSync(iconPath);
+	fs.existsSync(seaConfigPath) && fs.unlinkSync(seaConfigPath);
+	fs.existsSync(blobFilePath) && fs.unlinkSync(blobFilePath);
+	fs.existsSync(bundledPath) && fs.unlinkSync(bundledPath);
+	fs.rmSync(path.join(buildDir, 'ncc-output'), { recursive: true, force: true });
+	fs.existsSync(outputExePath) && fs.unlinkSync(outputExePath);
+	fs.existsSync(iconPath) && fs.unlinkSync(iconPath);
 
 	console.log(`\n✅ Build complete!`);
 	console.log(`Executable: ${path.relative(process.cwd(), distExePath)}`);
