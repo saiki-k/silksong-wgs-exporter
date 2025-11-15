@@ -32,7 +32,7 @@ jobs:
               uses: actions/upload-artifact@v4
               with:
                   name: build-windows
-                  path: build/*.zip
+                  path: dist/*.zip
 
     release:
         name: Create Release
