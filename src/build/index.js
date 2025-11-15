@@ -1,6 +1,9 @@
-const { copyFileSync, mkdirSync, writeFileSync, unlinkSync, rmSync, existsSync } = require('fs');
+const { copyFileSync, mkdirSync, writeFileSync, unlinkSync, rmSync, existsSync, readFileSync } = require('fs');
 const { execSync } = require('child_process');
 const path = require('path');
+const pngToIco = require('png-to-ico');
+const ResEdit = require('resedit');
+const AdmZip = require('adm-zip');
 
 async function build() {
 	console.log('Building single executable application...\n');
@@ -46,20 +49,17 @@ async function build() {
 
 	if (existsSync(pngPath)) {
 		try {
-			const pngToIco = require('png-to-ico');
 			const icoBuffer = await pngToIco(pngPath);
 			writeFileSync(iconPath, icoBuffer);
 			console.log('✓ Converted PNG to ICO');
 
 			console.log('⏳ Setting icon and metadata...');
-			const ResEdit = require('resedit');
-			const fs = require('fs');
 
-			const exeData = fs.readFileSync(outputExePath);
+			const exeData = readFileSync(outputExePath);
 			const exe = ResEdit.NtExecutable.from(exeData, { ignoreCert: true });
 			const res = ResEdit.NtExecutableResource.from(exe);
 
-			const iconFile = ResEdit.Data.IconFile.from(fs.readFileSync(iconPath));
+			const iconFile = ResEdit.Data.IconFile.from(readFileSync(iconPath));
 			ResEdit.Resource.IconGroupEntry.replaceIconsForResource(
 				res.entries,
 				1, // Icon ID
@@ -115,7 +115,6 @@ async function build() {
 	const distExePath = path.join(distDir, `wgs-inspector${extension}`);
 	copyFileSync(outputExePath, distExePath);
 
-	const AdmZip = require('adm-zip');
 	const zip = new AdmZip();
 	zip.addLocalFolder(distDir);
 	const zipPath = path.join(buildDir, `${distDirName}-v${version}.zip`);

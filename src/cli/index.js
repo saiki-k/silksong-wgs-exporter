@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const chalk = require('chalk');
 const { scanWGSPackages, scanPackageContainers } = require('../scanners');
 const { getExporter } = require('../exporters');
@@ -52,7 +53,11 @@ async function runCLI() {
 		displayContainerFilesTable(scanData.entries);
 
 		const availableExporter = getExporter(selectedPackage.packageName);
-		const { shouldExport, useExporter, exportMethod } = await promptExportConfirmation(availableExporter);
+		const genericExporter = getExporter('generic');
+		const { shouldExport, useExporter, exportMethod } = await promptExportConfirmation(
+			availableExporter,
+			genericExporter
+		);
 
 		if (!shouldExport) {
 			console.log(chalk.yellow('\n⊘ Export cancelled.'));
@@ -63,7 +68,7 @@ async function runCLI() {
 		let exporter = null;
 
 		if (useExporter) {
-			const exporterModule = exportMethod === 'generic' ? getExporter('generic') : availableExporter;
+			const exporterModule = exportMethod === 'generic' ? genericExporter : availableExporter;
 			exporter = exporterModule.exporter;
 
 			const exporterName = exporterModule.name;
@@ -82,15 +87,12 @@ async function runCLI() {
 			errors: [],
 		};
 
-		const fs = require('fs');
 		if (!fs.existsSync(exportPath)) {
 			fs.mkdirSync(exportPath, { recursive: true });
 		}
 
 		const resolvedExportPath = path.resolve(exportPath);
-		const exportResult = exporter
-			? exporter(scanData, resolvedExportPath, results)
-			: require('../exporters/generic').exporter(scanData, resolvedExportPath, results);
+		const exportResult = exporter(scanData, resolvedExportPath, results);
 
 		displayExportResults(exportResult);
 

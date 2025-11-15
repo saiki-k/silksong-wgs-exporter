@@ -113,7 +113,7 @@ async function promptPackageSelection(packages) {
 	return packages[packageIndex];
 }
 
-async function promptExportConfirmation(availableExporter) {
+async function promptExportConfirmation(availableExporter, genericExporter) {
 	const { shouldExport } = await inquirer.prompt([
 		{
 			type: 'confirm',
@@ -127,11 +127,17 @@ async function promptExportConfirmation(availableExporter) {
 		return { shouldExport, useExporter: false };
 	}
 
+	// If the available exporter is already generic, skip the choice
+	if (availableExporter.name === genericExporter.name) {
+		return {
+			shouldExport: true,
+			useExporter: true,
+			exportMethod: 'generic',
+		};
+	}
+
 	const exporterName = availableExporter.name;
 	const exporterColor = availableExporter.color || 'cyan';
-
-	const { getExporter } = require('../exporters');
-	const genericExporter = getExporter('generic');
 	const genericName = genericExporter.name;
 	const genericColor = genericExporter.color || 'yellow';
 
