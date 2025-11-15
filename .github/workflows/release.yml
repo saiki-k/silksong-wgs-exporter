@@ -75,8 +75,10 @@ jobs:
                   body: |
                       ${{ steps.release_notes.outputs.NOTES }}
 
+                      ## Downloads
+
                       Download `wgs-inspector-${{ github.ref_name }}.zip`.
 
-                      Extract the zip and run the executable to export your Game Pass saves.
+                      Extract the zip and run the executable to inspect and optionally export your Game Pass saves.
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
