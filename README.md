@@ -2,7 +2,7 @@
 
 [Download](../../releases) • [Documentation](./docs) • [Report Bugs](../../issues)
 
-Export save files from **Windows Gaming Services** (Game Pass) to a readable format.
+Inspect your **Game Pass** (Windows Gaming Services) save files, and optionally export them to a readable format.
 
 ![WGS Inspector Screenshot](./screenshot.png)
 
@@ -16,7 +16,7 @@ You can either use the pre-built standalone executable or run the project from s
 
 ### Use the standalone executable (Recommended)
 
-1. Download and extract `wgs-inspector.zip` from the [latest release](../../releases)
+1. Download and extract the `wgs-inspector` zip file from the [latest release](../../releases)
 
 2. Run `wgs-inspector.exe`
 
