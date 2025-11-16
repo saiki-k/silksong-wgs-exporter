@@ -1,13 +1,14 @@
 {
 	"name": "wgs-inspector",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description": "Export saves from Game Pass (WGS) games to compatible formats",
 	"main": "src/index.js",
 	"bin": {
 		"wgs-inspector": "src/index.js"
 	},
 	"scripts": {
-		"build": "node src/build"
+		"build": "node src/build",
+		"release": "node src/build/release.js"
 	},
 	"engines": {
 		"node": ">=20.6.0"
