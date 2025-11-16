@@ -4,6 +4,7 @@ const path = require('path');
 const pngToIco = require('png-to-ico');
 const ResEdit = require('resedit');
 const AdmZip = require('adm-zip');
+const { version } = require('../../package.json');
 
 async function build() {
 	console.log('Building single executable application...\n');
@@ -15,9 +16,6 @@ async function build() {
 	const blobFilePath = path.join(buildDir, 'sea-prep.blob');
 	const bundledPath = path.join(buildDir, 'bundled.js');
 	const seaConfigPath = path.join(buildDir, 'sea-config.json');
-
-	const packageJson = require('../../package.json');
-	const version = packageJson.version;
 
 	console.log('\n1. Bundling application with dependencies using ncc...');
 	execSync(`npx ncc build src/index.js -o dist/ncc-output`, { stdio: 'inherit' });
