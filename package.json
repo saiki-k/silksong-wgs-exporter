@@ -4,7 +4,7 @@
 	"description": "Export saves from Game Pass (WGS) games to compatible formats",
 	"main": "src/index.js",
 	"bin": {
-		"wgs-inspector": "wgs-inspector"
+		"wgs-inspector": "src/index.js"
 	},
 	"scripts": {
 		"build": "node src/build"
