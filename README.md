@@ -56,14 +56,14 @@ When a game-specific exporter is available, saves are exported in a structured f
 ```
 exported_wgs_save_files/
 └── 2025.11.16-14.30.45__TeamCherry.HollowKnightSilksong_y4jvztpgccj42/
-    ├── user1.dat                    # Save slot 1
-    ├── user2.dat                    # Save slot 2
-    ├── shared.dat                   # Shared game data (encrypted for Steam)
-    ├── Restore_Points1/             # Restore points for slot 1
+    ├── user1.dat                    # Save slot 1 (if it exists)
+    ├── user2.dat                    # Save slot 2 (if it exists)
+    ├── shared.dat                   # Shared game data (encrypted for Steam compatibility)
+    ├── Restore_Points1/             # Restore points for Save slot 1 (if it exists)
     │   ├── NODELrestoreData1.dat
     │   ├── restoreData2.dat
     │   └── ...
-    ├── Restore_Points2/             # Restore points for slot 2
+    ├── Restore_Points2/             # Restore points for Save slot 2 (if it exists)
     │    ├── NODELrestoreData2.dat
     │    └── ...
     └── ...
